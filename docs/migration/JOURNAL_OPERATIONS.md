@@ -183,3 +183,25 @@ Dès que les accès seront fournis, ajouter ici :
 4. Confirmation écrite Northflank (usage production, dépassement des 20 $/mois, facturation des builds).
 5. Dump Railway : bloqué faute d'accès.
 
+## 2026-10-26 — Session 4 : publication GitHub et correction de déploiement
+
+| Heure | Action | Résultat |
+|---|---|---|
+| — | Vérification des identités Git disponibles (`gh auth status --all`, `hosts.yml`, `GIT_TOKEN`, `.git-credentials`, clés SSH) | ✅ un seul compte `JAKORED`, `push:false` sur le dépôt officiel |
+| — | `git push --dry-run origin master` | ❌ 403 — « Permission denied to JAKORED » |
+| — | Création d'un fork `JAKORED/atlas---depeche` + push du commit `acda4b6` | ✅ |
+| — | Ouverture de la Pull Request #1 vers `atlasdepeche/atlas---depeche` | ✅ `OPEN`, `MERGEABLE`, 35 fichiers |
+| — | Tentative d'ouverture du navigateur pour se connecter à GitHub | ❌ `browser.disconnected` — aucun navigateur disponible dans la session |
+| — | Ajout de `docs/TRANSFERT_COMPTES.md` (sans aucun mot de passe) | ✅ |
+| — | Test réel de `next start` avec `output: "standalone"` | ❌ avertissement : `"next start" does not work with "output: standalone"` |
+| — | Suppression de `output: "standalone"` et adaptation du `Dockerfile` (copie `.next`, `public`, `next.config.ts`) | ✅ |
+| — | `npm run build` | ✅ exit 0 |
+| — | Démarrage réel + tests HTTP : `/api/health` 200, `/admin/login` 200, `/robots.txt` 200, `/manifest.webmanifest` 200, CSS statique 200 (24 277 octets) | ✅ |
+| — | `npm run typecheck` / `npm run lint` / `npm test` | ✅ 0 / 0 / **149 sur 149** |
+| — | Push du correctif `b9f3c65` sur le fork | ✅ |
+
+**Point de blocage restant** : la fusion de la PR #1 (ou l'ajout de `JAKORED` en Write)
+ne peut être faite que depuis le compte `atlasdepeche`. Aucun identifiant présent sur
+la machine ne le permet.
+
+
