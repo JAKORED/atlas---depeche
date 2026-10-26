@@ -6,6 +6,7 @@ import { db } from "@/db/client";
 import { articles, articleVersions, auditLogs, events } from "@/db/schema";
 import { transitionEvent } from "@/lib/event-state-machine";
 import { slugify } from "@/lib/slugify";
+import { requireAdminSession } from "@/lib/require-admin";
 
 /**
  * ASSISTED mode's human-approval step (MASTER_PROMPT section 11) — and,
@@ -18,6 +19,7 @@ import { slugify } from "@/lib/slugify";
  * nothing here is deployed.
  */
 export async function approveEventArticles(eventId: string) {
+  await requireAdminSession();
   await db
     .update(articles)
     .set({ status: "published", publishedAt: sql`now()` })
@@ -49,6 +51,7 @@ export async function approveEventArticles(eventId: string) {
  * specifically for this path.
  */
 export async function createManualArticle(formData: FormData) {
+  await requireAdminSession();
   const eventId = formData.get("eventId");
   const locale = formData.get("locale");
   const title = formData.get("title");
@@ -137,6 +140,7 @@ export async function createManualArticle(formData: FormData) {
  * docs — legal/corrections page describes this same workflow publicly.
  */
 export async function correctArticle(articleId: string, formData: FormData) {
+  await requireAdminSession();
   const newTitle = formData.get("title");
   const newBody = formData.get("body");
   const imageUrlRaw = formData.get("imageUrl");

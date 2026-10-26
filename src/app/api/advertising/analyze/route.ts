@@ -5,8 +5,13 @@
  */
 import { NextResponse } from "next/server";
 import { analyzeCompany } from "@/lib/advertising/company-analyzer";
+import { isAdminSession } from "@/lib/require-admin";
 
 export async function POST(request: Request) {
+  if (!(await isAdminSession())) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const { url } = body;

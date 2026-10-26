@@ -8,8 +8,13 @@ import { NextResponse } from "next/server";
 import { db } from "@/db/client";
 import { adCampaigns, adCreatives, adCompanies } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
+import { isAdminSession } from "@/lib/require-admin";
 
 export async function POST(request: Request) {
+  if (!(await isAdminSession())) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const {

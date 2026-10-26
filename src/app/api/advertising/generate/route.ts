@@ -14,8 +14,13 @@ import { templateProvider } from "@/lib/advertising/video-provider-template";
 import { checkCostGuard, logCost } from "@/lib/advertising/cost-guard";
 import { AD_SIZES, AD_FPS, AD_DURATION_DEFAULT } from "@/lib/advertising/types";
 import type { AdFormat } from "@/lib/advertising/types";
+import { isAdminSession } from "@/lib/require-admin";
 
 export async function POST(request: Request) {
+  if (!(await isAdminSession())) {
+    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const { companyId, format = "horizontal", durationMs } = body;

@@ -4,6 +4,7 @@ import { eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db/client";
 import { sourceItems } from "@/db/schema";
+import { requireAdminSession } from "@/lib/require-admin";
 
 /**
  * Removes one item from the public aggregator (and the Instagram-eligible
@@ -14,6 +15,7 @@ import { sourceItems } from "@/db/schema";
  * record entirely.
  */
 export async function hideSourceItem(id: string) {
+  await requireAdminSession();
   await db.update(sourceItems).set({ hiddenAt: sql`now()` }).where(eq(sourceItems.id, id));
 
   revalidatePath("/admin/moderate");
